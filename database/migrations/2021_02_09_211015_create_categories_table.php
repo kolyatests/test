@@ -18,7 +18,10 @@ class CreateCategoriesTable extends Migration
             $table->string('title');
             $table->string('content');
             $table->string('slug');
+            $table->integer('parent_id')->nullable();
             $table->timestamps();
+            $table->softDeletes();
+
         });
     }
 

@@ -19,8 +19,10 @@ class CreatePostsTable extends Migration
             $table->string('content');
             $table->string('slug');
             $table->integer('category_id');
-            $table->string('file');
+            $table->string('image')->nullable();
             $table->timestamps();
+            $table->softDeletes();
+
         });
     }
 

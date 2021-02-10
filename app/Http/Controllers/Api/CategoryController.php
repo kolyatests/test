@@ -38,7 +38,7 @@ class CategoryController extends Controller
      * @param  \App\Models\Category  $category
      * @return \Illuminate\Http\Response
      */
-    public function show(Category $category): JsonResponse//
+    public function show(Category $category): JsonResponse
     {
         return response()->json($category, 200);
     }

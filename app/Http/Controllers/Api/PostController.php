@@ -14,7 +14,7 @@ class PostController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(): JsonResponse//
+    public function index(): JsonResponse
     {
         return response()->json(Post::all(), 200);
     }
@@ -25,7 +25,7 @@ class PostController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(PostRequest $request): JsonResponse//
+    public function store(PostRequest $request): JsonResponse
     {
         $post = Post::add($request->all());
         $post->uploadImage($request->file('image'));
@@ -39,7 +39,7 @@ class PostController extends Controller
      * @param  \App\Models\Post  $post
      * @return \Illuminate\Http\Response
      */
-    public function show(Post $post): JsonResponse//
+    public function show(Post $post): JsonResponse
     {
         return response()->json($post, 200);
     }
@@ -51,7 +51,7 @@ class PostController extends Controller
      * @param  \App\Models\Post  $post
      * @return \Illuminate\Http\Response
      */
-    public function update(PostRequest $request, Post $post): JsonResponse//
+    public function update(PostRequest $request, Post $post): JsonResponse
     {
         $post->edit($request->all());
         $post->uploadImage($request->file('image'));
@@ -65,7 +65,7 @@ class PostController extends Controller
      * @param  \App\Models\Post  $post
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Post $post): JsonResponse//
+    public function destroy(Post $post): JsonResponse
     {
         $post->remove();
         return response()->json('', 204);
