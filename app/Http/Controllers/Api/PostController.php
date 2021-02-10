@@ -3,9 +3,9 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\PostRequest;
 use App\Models\Post;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 
 class PostController extends Controller
 {
@@ -14,19 +14,9 @@ class PostController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(): JsonResponse
+    public function index(): JsonResponse//
     {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create(): JsonResponse
-    {
-        //
+        return response()->json(Post::all(), 200);
     }
 
     /**
@@ -35,9 +25,12 @@ class PostController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request): JsonResponse
+    public function store(PostRequest $request): JsonResponse//
     {
-        //
+        $post = Post::add($request->all());
+        $post->uploadImage($request->file('image'));
+        $post->setCategory($request->get('category_id'));
+        return response()->json($post, 201);
     }
 
     /**
@@ -46,20 +39,9 @@ class PostController extends Controller
      * @param  \App\Models\Post  $post
      * @return \Illuminate\Http\Response
      */
-    public function show(Post $post): JsonResponse
+    public function show(Post $post): JsonResponse//
     {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Post  $post
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Post $post): JsonResponse
-    {
-        //
+        return response()->json($post, 200);
     }
 
     /**
@@ -69,9 +51,12 @@ class PostController extends Controller
      * @param  \App\Models\Post  $post
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Post $post): JsonResponse
+    public function update(PostRequest $request, Post $post): JsonResponse//
     {
-        //
+        $post->edit($request->all());
+        $post->uploadImage($request->file('image'));
+        $post->setCategory($request->get('category_id'));
+        return response()->json($post, 200);
     }
 
     /**
@@ -80,8 +65,9 @@ class PostController extends Controller
      * @param  \App\Models\Post  $post
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Post $post): JsonResponse
+    public function destroy(Post $post): JsonResponse//
     {
-        //
+        $post->remove();
+        return response()->json('', 204);
     }
 }
