@@ -3,9 +3,9 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\CategoryRequest;
 use App\Models\Category;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 
 class CategoryController extends Controller
 {
@@ -14,19 +14,9 @@ class CategoryController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function index(Request $request): JsonResponse
+    public function index(): JsonResponse//
     {
-//        return response()->json(['error' => true, 'message' => 'no', 422]);;
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create(): JsonResponse
-    {
-        //
+        return response()->json(Category::all(), 200);
     }
 
     /**
@@ -35,9 +25,11 @@ class CategoryController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request): JsonResponse
+    public function store(CategoryRequest $request): JsonResponse
     {
-        //
+        $category = Category::create($request->all());
+        return response()->json($category, 201);
+
     }
 
     /**
@@ -46,20 +38,9 @@ class CategoryController extends Controller
      * @param  \App\Models\Category  $category
      * @return \Illuminate\Http\Response
      */
-    public function show(Category $category): JsonResponse
+    public function show(Category $category): JsonResponse//
     {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Category  $category
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Category $category): JsonResponse
-    {
-        //
+        return response()->json($category, 200);
     }
 
     /**
@@ -69,9 +50,10 @@ class CategoryController extends Controller
      * @param  \App\Models\Category  $category
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Category $category): JsonResponse
+    public function update(CategoryRequest $request, Category $category): JsonResponse
     {
-
+        $category->update($request->all());
+        return response()->json($category, 200);
     }
 
     /**
@@ -82,6 +64,8 @@ class CategoryController extends Controller
      */
     public function destroy(Category $category): JsonResponse
     {
-        //
+        $category->remove();
+        return response()->json('', 204);
+
     }
 }
