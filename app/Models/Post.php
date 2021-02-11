@@ -6,6 +6,7 @@ use Cviebrock\EloquentSluggable\Sluggable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Http\Exceptions\HttpResponseException;
 use Storage;
 use Str;
 
@@ -29,6 +30,16 @@ class Post extends Model
         'deleted_at',
         'image',
     ];
+
+    public function resolveRouteBinding($post, $field = null)///
+    {
+        if (!Post::find($post)) {
+            throw new HttpResponseException(
+                response()->json(['error' => true, 'message' => 'Not found'], 404)
+            );
+        }
+        return $this->find($post);
+    }
 
     public function sluggable()
     {
@@ -73,18 +84,18 @@ class Post extends Model
 
     public function uploadImage($image)
     {
-        if (! $image) {
+        if (!$image) {
             return;
         }
         $this->removeImage();
-        $filename=Str::random(10).'.'.$image->extension();
+        $filename = Str::random(10) . '.' . $image->extension();
         $image->storeAs('uploads', $filename);
         $this->update(['image' => $filename]);
     }
 
     public function setCategory($id)
     {
-        if (! $id) {
+        if (!$id) {
             return;
         }
         $this->update(['category_id' => $id]);

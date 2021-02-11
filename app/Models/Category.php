@@ -6,6 +6,7 @@ use Cviebrock\EloquentSluggable\Sluggable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Http\Exceptions\HttpResponseException;
 
 class Category extends Model
 {
@@ -26,6 +27,16 @@ class Category extends Model
         'updated_at',
         'deleted_at',
     ];
+
+    public function resolveRouteBinding($category, $field = null)///
+    {
+        if (!Category::find($category)) {
+            throw new HttpResponseException(
+                response()->json(['error' => true, 'message' => 'Not found'], 404)
+            );
+        }
+        return $this->find($category);
+    }
 
     public function sluggable()
     {
