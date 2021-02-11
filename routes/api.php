@@ -19,9 +19,9 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 
 Route::group(
-    ['middleware' => ['token.verify']],
+    ['middleware' => ['token.verify','bindings']],
     function () {
-        Route::resource('/categories', \App\Http\Controllers\Api\CategoryController::class);
+        Route::resource('/categories', \App\Http\Controllers\Api\CategoryController::class)->middleware('bindings');
         Route::resource('/posts', \App\Http\Controllers\Api\PostController::class);
     }
 );
