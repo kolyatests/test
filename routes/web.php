@@ -17,5 +17,5 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/category/{category}', \App\Http\Controllers\CategoryController::class);
-Route::get('/post/{post}', \App\Http\Controllers\PostController::class);
+Route::get('/category/{category}', \App\Http\Controllers\CategoryController::class)->name('category');
+Route::get('/post/{post}', \App\Http\Controllers\PostController::class)->name('post');
