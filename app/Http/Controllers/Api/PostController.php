@@ -10,9 +10,28 @@ use Illuminate\Http\JsonResponse;
 class PostController extends Controller
 {
     /**
+     * @OA\Get(
+     *     path="/posts",
+     *     operationId="Index",
+     *     summary="Display a list of posts",
+     *     tags={"Posts"},
+     *     @OA\Response(
+     *         response=200,
+     *         description="Return a list of of posts",
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(
+     *                 type="array",
+     *                 @OA\Items(ref="#/components/schemas/PostListRequest"),
+     *             )
+     *         )
+     *     ),
+     *     security={{ "apiAuth": {} }}
+     * )
+     *
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return JsonResponse
      */
     public function index(): JsonResponse
     {
@@ -20,10 +39,99 @@ class PostController extends Controller
     }
 
     /**
+     * @OA\Get(
+     *     path="/posts/{id}",
+     *     operationId="Show",
+     *     summary="Show post",
+     *     tags={"Posts"},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         description="Update post by id",
+     *         required=true,
+     *         example="2",
+     *         @OA\Schema(
+     *             type="integer",
+     *         ),
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Show post by id",
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(
+     *                 type="array",
+     *                 @OA\Items(ref="#/components/schemas/PostListRequest"),
+     *             )
+     *         )
+     *     ),
+     *     security={{ "apiAuth": {} }}
+     * )
+     *
+     * Display the specified resource.
+     *
+     * @param Post $post
+     * @return JsonResponse
+     */
+    public function show(Post $post): JsonResponse
+    {
+        return response()->json($post, 200);
+    }
+
+    /**
+     * @OA\Post(
+     *     path="/posts",
+     *     operationId="Store",
+     *     tags={"Posts"},
+     *     summary="Store post",
+     *     @OA\Parameter(
+     *         name="title",
+     *         in="query",
+     *         description="Store title",
+     *         required=true,
+     *         example="new name",
+     *         @OA\Schema(
+     *             type="string",
+     *         )
+     *     ),
+     *     @OA\Parameter(
+     *         name="content",
+     *         in="query",
+     *         description="Store description",
+     *         required=true,
+     *         example="new description",
+     *         @OA\Schema(
+     *             type="string",
+     *         )
+     *     ),
+     *     @OA\Parameter(
+     *         name="category_id",
+     *         in="query",
+     *         description="Category Id",
+     *         required=true,
+     *         example="2",
+     *         @OA\Schema(
+     *             type="integer",
+     *         ),
+     *     ),
+     *     @OA\Response(
+     *         response="201",
+     *         description="Save completed successfully",
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(
+     *                 type="array",
+     *                 @OA\Items(ref="#/components/schemas/PostRequest"),
+     *             )
+     *         )
+     *     ),
+     *     security={{ "apiAuth": {} }}
+     * )
+     *
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param PostRequest $request
+     * @return JsonResponse
      */
     public function store(PostRequest $request): JsonResponse
     {
@@ -34,22 +142,70 @@ class PostController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * @OA\Patch(
+     *     path="/posts/{id}",
+     *     operationId="Update",
+     *     tags={"Posts"},
+     *     summary="Update post",
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         description="Select post by id",
+     *         required=true,
+     *         example="2",
+     *         @OA\Schema(
+     *             type="integer",
+     *         ),
+     *     ),
+     *     @OA\Parameter(
+     *         name="title",
+     *         in="query",
+     *         description="Update title",
+     *         required=true,
+     *         example="new name",
+     *         @OA\Schema(
+     *             type="string",
+     *         )
+     *     ),
+     *     @OA\Parameter(
+     *         name="content",
+     *         in="query",
+     *         description="Update description",
+     *         required=true,
+     *         example="new description",
+     *         @OA\Schema(
+     *             type="string",
+     *         )
+     *     ),
+     *     @OA\Parameter(
+     *         name="parent_id",
+     *         in="query",
+     *         description="ParentId",
+     *         required=true,
+     *         example="2",
+     *         @OA\Schema(
+     *             type="integer",
+     *         ),
+     *     ),
+     *     @OA\Response(
+     *         response="200",
+     *         description="Return new post name",
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(
+     *                 type="array",
+     *                 @OA\Items(ref="#/components/schemas/PostListRequest"),
+     *             )
+     *         )
+     *     ),
+     *     security={{ "apiAuth": {} }}
+     * )
      *
-     * @param  \App\Models\Post  $post
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Post $post): JsonResponse
-    {
-        return response()->json($post, 200);
-    }
-
-    /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Post  $post
-     * @return \Illuminate\Http\Response
+     * @param PostRequest $request
+     * @param Post $post
+     * @return JsonResponse
      */
     public function update(PostRequest $request, Post $post): JsonResponse
     {
@@ -60,10 +216,31 @@ class PostController extends Controller
     }
 
     /**
+     * @OA\Delete(
+     *     path="/posts/{id}",
+     *     operationId="Delete",
+     *     tags={"Posts"},
+     *     summary="Remove post",
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         description="Remove post by id)",
+     *         required=true,
+     *         example="1",
+     *         @OA\Schema(
+     *             type="integer",
+     *         ),
+     *     ),
+     *     @OA\Response(
+     *         response="204",
+     *         description="Deleted",
+     *     ),
+     *     security={{ "apiAuth": {} }}
+     * )
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Post  $post
-     * @return \Illuminate\Http\Response
+     * @param Post $post
+     * @return JsonResponse
      */
     public function destroy(Post $post): JsonResponse
     {
