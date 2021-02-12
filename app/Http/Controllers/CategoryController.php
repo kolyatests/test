@@ -12,12 +12,9 @@ class CategoryController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function __invoke($slug): JsonResponse
+    public function __invoke(Category $category): JsonResponse
     {
-        $category = Category::where('slug', $slug)->first()->load('categoryChildren.posts');
-        if (! $category) {
-            return response()->json(['error' => true, 'message' => 'Not found'], 404);
-        }
+        $category = $this->load('categoryChildren.posts');
 
         return response()->json($category, 200);
     }

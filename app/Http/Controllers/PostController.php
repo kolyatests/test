@@ -13,13 +13,8 @@ class PostController extends Controller
      * @param $slug
      * @return JsonResponse
      */
-    public function __invoke($slug): JsonResponse
+    public function __invoke(Post $post): JsonResponse
     {
-        $post = Post::where('slug', $slug)->first();
-        if(! $post){
-            return response()->json(['error' => true, 'message' => 'Not found'], 404);
-        }
-
         return response()->json($post, 200);
     }
 
