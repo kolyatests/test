@@ -5,8 +5,8 @@ namespace App\Models;
 use Cviebrock\EloquentSluggable\Sluggable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Http\Exceptions\HttpResponseException;
 use Storage;
 use Str;
 
@@ -31,17 +31,7 @@ class Post extends Model
         'image',
     ];
 
-    public function resolveRouteBinding($post, $field = null)///
-    {
-        if (!Post::find($post)) {
-            throw new HttpResponseException(
-                response()->json(['error' => true, 'message' => 'Not found'], 404)
-            );
-        }
-        return $this->find($post);
-    }
-
-    public function sluggable()
+    public function sluggable(): array
     {
         return [
             'slug' => [
@@ -50,12 +40,12 @@ class Post extends Model
         ];
     }
 
-    public function category()
+    public function category(): BelongsTo
     {
         return $this->belongsTo(Category::class);
     }
 
-    public static function add($field)
+    public static function add($field): Post
     {
         $post = new static;
         $post->fill($field);
@@ -63,26 +53,26 @@ class Post extends Model
         return $post;
     }
 
-    public function edit($field)
+    public function edit($field): void
     {
         $this->fill($field);
         $this->save();
     }
 
-    public function remove()
+    public function remove(): void
     {
         $this->removeImage();
         $this->delete();
     }
 
-    public function removeImage()
+    public function removeImage(): void
     {
         if ($this->image != null) {
             Storage::delete('uploads/' . $this->image);
         }
     }
 
-    public function uploadImage($image)
+    public function uploadImage($image): void
     {
         if (!$image) {
             return;

@@ -5,8 +5,8 @@ namespace App\Models;
 use Cviebrock\EloquentSluggable\Sluggable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Http\Exceptions\HttpResponseException;
 
 class Category extends Model
 {
@@ -28,17 +28,7 @@ class Category extends Model
         'deleted_at',
     ];
 
-    public function resolveRouteBinding($category, $field = null)///
-    {
-        if (!Category::find($category)) {
-            throw new HttpResponseException(
-                response()->json(['error' => true, 'message' => 'Not found'], 404)
-            );
-        }
-        return $this->find($category);
-    }
-
-    public function sluggable()
+    public function sluggable(): array
     {
         return [
             'slug' => [
@@ -47,17 +37,17 @@ class Category extends Model
         ];
     }
 
-    public function posts()
+    public function posts(): HasMany
     {
         return $this->hasMany(Post::class);
     }
 
-    public function categoryChildren()
+    public function categoryChildren(): hasMany
     {
         return $this->hasMany(Category::class, 'parent_id', 'id');
     }
 
-    public function remove()
+    public function remove(): void
     {
         $this->posts->each->remove();
         $this->delete();
