@@ -2,9 +2,9 @@
 
 namespace Tests\Feature\Http\Controllers\Api;
 
+use App\Models\Category;
 use App\Models\Post;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
-use Tests\Generator\PostGenerator;
 use Tests\TestCase;
 
 class PostControllerTest extends TestCase
@@ -14,10 +14,10 @@ class PostControllerTest extends TestCase
 
     public function testIndex()
     {
-        PostGenerator::createPost();
+        $post = Post::factory()->create();
         $this->get(route('posts.index'))
             ->assertStatus(200)
-            ->assertSee('post description')
+            ->assertSee($post->title)
             ->assertJsonStructure(
                 [
                     [
@@ -32,17 +32,17 @@ class PostControllerTest extends TestCase
         $this->assertDatabaseHas(
             'posts',
             [
-                'content' => 'post description'
+                'title' => $post->title
             ]
         );
     }
 
     public function testShow()
     {
-        PostGenerator::createPost();
-        $this->get(route('posts.show', ['post' => 1]))
+        $post = Post::factory()->create();
+        $this->get(route('posts.show', 1))
             ->assertStatus(200)
-            ->assertSee('post description')
+            ->assertSee($post->title)
             ->assertJsonStructure(
                 [
                     'title',
@@ -55,26 +55,19 @@ class PostControllerTest extends TestCase
         $this->assertDatabaseHas(
             'posts',
             [
-                'content' => 'post description'
+                'title' => $post->title
             ]
         );
     }
 
-
     public function testStore()
     {
+        Category::factory()->create();
+        $post = Post::factory()->make();
         $this->post(
-            route(
-                'posts.store',
-                [
-                    'title' => 'post',
-                    'content' => 'post description',
-                    'category_id' => '1'
-                ]
-            )
-        )
+            route('posts.store',$post->toArray()))
             ->assertStatus(201)
-            ->assertSee('post description')
+            ->assertSee($post->title)
             ->assertJsonStructure(
                 [
                     'title',
@@ -87,40 +80,33 @@ class PostControllerTest extends TestCase
         $this->assertDatabaseHas(
             'posts',
             [
-                'content' => 'post description'
+                'title' => $post->title
             ]
         );
     }
 
     public function testUpdate()
     {
-        $post = PostGenerator::createPost();
-        $this->put(
-            'api/posts/1',
-            [
-                'title' => 'post new',
-                'content' => 'post description new',
-                'category_id' => '1'
-            ]
-        )
+        Category::factory()->create();
+        $postOld = Post::factory()->create();
+        $postNew = Post::factory()->make();
+        $this->put('api/posts/1',$postNew->toArray())
             ->assertStatus(200)
-            ->assertSee('post description new');
+            ->assertSee($postNew->title);
         $this->assertDatabaseHas(
             'posts',
             [
-                'content' => 'post description new'
+                'title' => $postNew->title
             ]
         );
-        $this->assertFalse($post->title == Post::first()->title);
+        $this->assertFalse($postOld->title == Post::first()->title);
     }
 
     public function testDestroy()
     {
-        $post = PostGenerator::createPost();
+        $post = Post::factory()->create();
         $this->delete(route('posts.destroy', 1))
             ->assertStatus(204);
         $this->assertSoftDeleted($post);
     }
-
-
 }

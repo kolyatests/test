@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Http\Controllers;
 
+use App\Models\Category;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Tests\Generator\CategoryGenerator;
 use Tests\TestCase;
@@ -12,10 +13,11 @@ class CategoryControllerTest extends TestCase
 
     public function test__invoke()
     {
-        CategoryGenerator::createCategory();
-        $this->get(route('category', ['category' => 'category']))
+        $category = Category::factory()->create();
+        $this
+            ->get(route('category', $category->slug))
             ->assertStatus(200)
-            ->assertSee('category description')
+            ->assertSee($category->title)
             ->assertJsonStructure(
                 [
                     'title',
@@ -24,11 +26,12 @@ class CategoryControllerTest extends TestCase
                     'slug',
                     'id',
                 ]
-            );
+            )
+        ;
         $this->assertDatabaseHas(
             'categories',
             [
-                'content' => 'category description'
+                'title' => $category->title
             ]
         );
     }

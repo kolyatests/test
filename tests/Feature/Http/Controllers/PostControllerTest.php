@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Http\Controllers;
 
+use App\Models\Post;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Tests\Generator\PostGenerator;
 use Tests\TestCase;
@@ -12,10 +13,10 @@ class PostControllerTest extends TestCase
 
     public function test__invoke()
     {
-        PostGenerator::createPost();
-        $this->get(route('post', ['post' => 'post']))
+        $post = Post::factory()->create();
+        $this->get(route('post', $post->slug))
             ->assertStatus(200)
-            ->assertSee('post description')
+            ->assertSee($post->title)
             ->assertJsonStructure(
                 [
                     'title',
@@ -28,7 +29,7 @@ class PostControllerTest extends TestCase
         $this->assertDatabaseHas(
             'posts',
             [
-                'content' => 'post description'
+                'title' => $post->title
             ]
         );
     }

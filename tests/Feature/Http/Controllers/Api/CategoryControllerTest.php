@@ -3,8 +3,9 @@
 namespace Tests\Feature\Http\Controllers\Api;
 
 use App\Models\Category;
+use App\Models\Post;
+use App\Models\User;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\Generator\CategoryGenerator;
 use Tests\TestCase;
 
@@ -15,10 +16,10 @@ class CategoryControllerTest extends TestCase
 
     public function testIndex()
     {
-        CategoryGenerator::createCategory();
+        $category = Category::factory()->create();
         $this->get(route('categories.index'))
             ->assertStatus(200)
-            ->assertSee('category description')
+            ->assertSee($category->title)
             ->assertJsonStructure(
                 [
                     [
@@ -33,30 +34,32 @@ class CategoryControllerTest extends TestCase
         $this->assertDatabaseHas(
             'categories',
             [
-                'content' => 'category description'
+                'title' => $category->title
             ]
         );
     }
 
     public function testShow()
     {
-        CategoryGenerator::createCategory();
-        $this->get(route('categories.show', ['category' => 1]))
+        $category = Category::factory()->create();
+        $this
+            ->get(route('categories.show', 1))
             ->assertStatus(200)
-            ->assertSee('category description')
+            ->assertSee($category->title)
             ->assertJsonStructure(
                 [
+                    'id',
                     'title',
                     'content',
-                    'parent_id',
                     'slug',
-                    'id',
+                    'parent_id',
                 ]
-            );
+            )
+        ;
         $this->assertDatabaseHas(
             'categories',
             [
-                'content' => 'category description'
+                'title' => $category->title
             ]
         );
     }
@@ -64,19 +67,11 @@ class CategoryControllerTest extends TestCase
 
     public function testStore()
     {
-        CategoryGenerator::createCategory();
-        $this->post(
-            route(
-                'categories.store',
-                [
-                    'title' => 'category',
-                    'content' => 'category description',
-                    'parent_id' => '1'
-                ]
-            )
-        )
+        $category = Category::factory()->make();
+        $this
+            ->post(route('categories.store', $category->toArray()))
             ->assertStatus(201)
-            ->assertSee('category description')
+            ->assertSee($category->title)
             ->assertJsonStructure(
                 [
                     'title',
@@ -89,14 +84,14 @@ class CategoryControllerTest extends TestCase
         $this->assertDatabaseHas(
             'categories',
             [
-                'content' => 'category description'
+                'title' => $category->title
             ]
         );
     }
 
     public function testUpdate()
     {
-        $category = CategoryGenerator::createCategory();
+        $category = Category::factory()->create();
         $this->put(
             'api/categories/1',
             [
@@ -118,10 +113,12 @@ class CategoryControllerTest extends TestCase
 
     public function testDestroy()
     {
-        $category = CategoryGenerator::createCategory();
+        $post = Post::factory()->create();
+        $category = Category::factory()->create();
         $this->delete(route('categories.destroy', 1))
             ->assertStatus(204);
         $this->assertSoftDeleted($category);
+        $this->assertSoftDeleted($post);
     }
 
 
