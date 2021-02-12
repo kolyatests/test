@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature;
+namespace Tests\Feature\Http\Controllers\Api;
 
 use App\Models\Post;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
@@ -63,7 +63,6 @@ class PostControllerTest extends TestCase
 
     public function testStore()
     {
-        PostGenerator::createPost();
         $this->post(
             route(
                 'posts.store',

@@ -1,34 +1,34 @@
 <?php
 
-namespace Tests\Http\Controllers;
+namespace Tests\Feature\Http\Controllers;
 
 use Illuminate\Foundation\Testing\DatabaseMigrations;
-use Tests\Generator\CategoryGenerator;
+use Tests\Generator\PostGenerator;
 use Tests\TestCase;
 
-class CategoryControllerTest extends TestCase
+class PostControllerTest extends TestCase
 {
     use DatabaseMigrations;
 
     public function test__invoke()
     {
-        CategoryGenerator::createCategory();
-        $this->get(route('category', ['category' => 'category']))
+        PostGenerator::createPost();
+        $this->get(route('post', ['post' => 'post']))
             ->assertStatus(200)
-            ->assertSee('category description')
+            ->assertSee('post description')
             ->assertJsonStructure(
                 [
                     'title',
                     'content',
-                    'parent_id',
+                    'category_id',
                     'slug',
                     'id',
                 ]
             );
         $this->assertDatabaseHas(
-            'categories',
+            'posts',
             [
-                'content' => 'category description'
+                'content' => 'post description'
             ]
         );
     }
